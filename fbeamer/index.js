@@ -4,24 +4,23 @@ class FBeamer{
     constructor({pageAccessToken, VerifyToken}) {
         if (pageAccessToken != null && VerifyToken != null)
         {
-            this.pageAccessToken=pageAccessToken;
-            this.VerifyToken=VerifyToken;
+            this.pageAccessToken = pageAccessToken;
+            this.VerifyToken = VerifyToken;
             console.log('It works perfectly <3');
         }
         else
             console.log(`Error: one token is missing ${pageAccessToken} and ${VerifyToken}`);
     }
     
-    registerHook(req, res)
-    {
+    registerHook(req, res) {
         const params = req.query;
-        const mode = params['hub.mode'],
-        token = params['hub.verify_token'],
-        challenge = params['hub.challenge'];
-        
+        const mode = params['hub.mode'];
+        const token = params['hub.verify_token'];
+        const challenge = params['hub.challenge'];
+
         try {
             
-            if (mode == 'subscribe' && token === VerifyToken) {
+            if ((mode == 'subscribe') && (token == this.VerifyToken)) {
                 console.log("Webhook is registered")
                 return res.send(challenge);
             } 
@@ -33,7 +32,20 @@ class FBeamer{
         } catch(e) {
             console.log(e);
         }
-    }   
+    }
+    
+    incoming(req, res, cb) {
+        res.sendStatus(200);
+        console.log('in incoming');
+        
+        // Extract the body of the POST request
+        if (req.body.object === 'page' && req.body.entry) {
+            let data = req.body;
+            console.log(data);
+            
+            // to be complete later  
+        }
+    }
 }
 
-module.exports= FBeamer;
+module.exports = FBeamer;
